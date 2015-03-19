@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FxOSU API</title>
+  <meta charset=utf-8>
+  <script src='respec-w3c-common' async class='remove'></script>
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=MML_HTMLorMML"></script>
+  <script class='remove'>
+    var respecConfig = {
+        specStatus: "WD",
+        shortName:  "fxosu",
+        edDraftURI: "https://johnlzeller.github.io/fxosu-api/",
+        editors: [
+              {   name:       "John Zeller",
+                  company:    "Unaffiliated",
+                  companyURL: "https://www.johnzeller.com/",
+                  mailto:     "johnlzeller@gmail.com" },
+              {
+                  name:       "Pok Yan Tjiam",
+                  company:    "Unaffiliated",
+                  mailto:     "tjiamp@onid.oregonstate.edu" },
+              {
+                  name:       "Jonathan McNeil",
+                  company:    "Unaffiliated",
+                  mailto:     "mcneilj@onid.oregonstate.edu" },
+        ],
+        previousMaturity: "N/A",
+        previousPublishDate:  "N/A",
+        previousURI:  "N/A",
+        wg:           "FxOSU Working Group",
+        wgURI:        "",
+        wgPublicList: "public-fxosu",
+        wgPatentURI:  "",
+        tocIntroductory: true,
+        copyrightStart: 2015,
+        otherLinks: [
+          {
+            key: "Repository",
+            href: "https://github.com/johnlzeller/fxosu-api/" },
+          {
+            key: "Bug tracker",
+            href: "https://github.com/johnlzeller/fxosu-api/issues?state=open" },
+        ]
+    };
+  </script>
+  <script>
+    function findBadLink () {
+      var old = document.querySelectorAll(".badLink");
+      for (var i = 0 ; i < old.length; i++) {
+        nodes[i].style.backgroundColor = "";
+        nodes[i].classList.remove("badLink");
+      }
+      var nodes = document.querySelectorAll('a');
+
+      for (var i = 0; i < nodes.length; i++) {
+          if (nodes[i].href) {
+              var id =  nodes[i].href.split("/");
+              id = id[id.length - 1];
+              if (id.length != 0) {
+                  if (id[0] == "#") {
+                      if (document.querySelectorAll(id).length == 0) {
+                        nodes[i].style.backgroundColor = "red";
+                        nodes[i].classList.add("badLink");
+                        console.log(nodes[i].textContent);
+                    }
+                 }
+              }
+          } else {
+            nodes[i].style.backgroundColor = "red";
+            nodes[i].classList.add("badLink");
+          }
+      }
+    }
+
+    function findMissingLink() {
+      var codetags = document.querySelectorAll("code");
+
+      for (var i = 0; i < codetags.length; i++) {
+        if (!(codetags[i].parentNode instanceof HTMLAnchorElement) ||
+            codetags[i].parentNode.href == "") {
+          codetags[i].style.backgroundColor = 'hotpink';
+          codetags[i].style.color  = 'yellow';
+
+          console.log(codetags[i].innerHTML);
+        }
+      }
+    }
+  </script>
+</head>
+
+<body>
+
+<section id="abstract">
+<p>This specification describes a high-level JavaScript <abbr
+title="Application Programming Interface">API</abbr> for determining efficient
+timing of network requests. The primary concept is to consider a devices'
+environmental conditions, such as battery life, network request success/failure
+rates, latency, etc to better time the execution of a network request.</p>
+
+<p>The <a href="#introduction">introductory</a> section covers the motivation
+behind this specification.</p>
+
+<p>This API is designed for use in conjunction with other APIs on the web platform, 
+notably: XMLHttpRequest [[XHR]] (using the <code>responseType</code> and 
+<code>response</code> attributes). </p>
+</section>
+
+<section id="sotd">
+</section>
+
+<section class="introductory">
+<h2>Introduction</h2>
+<section>
+
+<p>Many developing countries are burdened with poor quality infrastructure, and that includes unreliable networks and electrical grids. Poor network conditions make some applications very frustrating, costly, and even unusable. Charging a phone can take days for users living among the most unreliable electrical grids. Most work on web standards up until now has been done with the implicit assumptions that any users' experience is rooted in an environment where electricity is abundant, networks are at least somewhat reliable, and data costs are not a problem. Specifications that take into account the fastest growing part of our community, and their seemingly new challanges, are desperately needed.</p>
+
+<p>To that end, the FxOSU API has been designed with environmental awareness in mind. A common use case among developers is to make network requests in a 'dumb' loop; one which simply loops until the request was successful, paying no mind to the result of each individual attempt at network access. This API aims to supply a simple, and adjustable, way of determining if now is a good time to make a network request.</p>
+</section>
+
+<section>
+<h2 id="EnvironmentalVariables">Environmental Variables</h2>
+
+<p>The API will take into account these primary environmental variables: </p>
+<ul>
+  <li><a href="#chargingState">Charging State</a></li>
+  <li><a href="#batteryLevel">Battery Level</a></li>
+  <li><a href="#networkConnectivity">Network Connectivity</a></li>
+  <li><a href="#networkType">Network Type</a></li>
+  <li><a href="#networkAccess">Network Access History</a></li>
+  <li><a href="#systemMemoryUsage">System Memory Usage</a></li>
+</ul>
+
+<section>
+<h2 id="chargingState">Charging State</h2>
+
+<p>The Charging State is determined by accessing the <code>charging</code> method of the <code>Battery</code> object, which is accessible via the <code>window</code> object.</p>
+
+</section>
+
+<section>
+<h2 id="batteryLevel">Battery Level</h2>
+
+<p>The Battery Level is determined by accessing the <code>level</code> method of the <code>Battery</code> object, which is accessible via the <code>window</code> object.</p>
+
+</section>
+
+<section>
+<h2 id="networkConnectivity">Network Connectivity</h2>
+
+<p>The Network Connectivity is determined by accessing the <code>isLinkUp</code> attribute of the <code>nsINetworkLinkService</code> xpcom component interface.</p>
+
+</section>
+
+<section>
+<h2 id="networkType">Network Type</h2>
+
+<p>The Network Type is determined by accessing the <code>linkType</code> attribute of the <code>nsINetworkLinkService</code> xpcom component interface.</p>
+
+</section>
+
+<section>
+<h2 id="networkAccess">Network Access History</h2>
+
+<p>The Network Access History is determined by accessing the <code>getSamples</code> method of the <code>nsIDOMMozNetworkStatsManager</code> xpcom component interface, which returns a <code>nsIDOMMozNetworkStats</code> object, whose <code>data</code> attribute holds an array of <code>nsIDOMMozNetworkStatsData</code> objects, each of which has an <code>rxBytes</code> and <code>txBytes</code> attribute. By adding up all of the <code>rxBytes</code> and <code>txBytes</code> values, the total bytes sent and received successfully within an arbitrary time period can be determined.</p>
+
+</section>
+
+<section>
+<h2 id="systemMemoryUsage">System Memory Usage</h2>
+
+<p>The System Memory Usage is determined by accessing the <code>explicit</code> and <code>resident</code> attributes of the <code>nsIMemoryReporterManager</code> xpcom component interface</p>
+
+</section>
+</section>
+
+<section>
+<h2 id="APIOverview">API Overview</h2>
+
+<p>The interfaces defined are: </p>
+<ul>
+  <li>An <a class="dfnref" href="#FxOSUService">FxOSUService</a>
+    interface, which contains the primary method, <code>isNowGood</code>.</li>
+</ul>
+</section>
+</section>
+
+<section id="fxosuapi">
+<h2 id="API">The FxOSU API</h2>
+
+<section>
+<h2 id="FxOSUService">The FxOSUService Interface</h2>
+
+<p>This interface </p>
+
+<dl title="[Constructor] interface FxOSUService" class="idl"
+  data-merge="DecodeSuccessCallback DecodeErrorCallback">
+
+  <dt>DOMString isNowGood()</dt>
+  <dd>Provides a boolean value signifying whether or not now is a good time to make a network request.
+    <dl class="parameters">
+      <dt>optional DOMString level = "2"</dt>
+      <dd>
+        This parameter is a DOMString representing one of three possible levels of certainty. This serves as a <a href="#confidenceLevels">confidence level</a> about the decision being reached by the API. Default is 2, or moderate confidence.
+      </dd>
+    </dl>
+  </dd>
+</dl>
+
+<section>
+  <h3 id="confidenceLevels" class="informative">Confidence Levels</h3>
+
+  <p>
+    There are 3 possible levels of confidence that the APIs only method <code>isNowGood</code> takes as input. These are as follows:
+    <ol>
+      <li>High - Level 1 seeks to provide a high level of confidence.</li>
+      <li>Moderate (Default) - Level 2 seeks to provide a moderate level of confidence.</li>
+      <li>Low - Level 3 seeks to provide a low level of confidence. If a network request should succeed in almost all cases, this is the level to choose.</li>
+    </ol>
+  </p>
+</section>
+
+<section>
+  <h3 id="votingScheme" class="informative">Voting Scheme</h3>
+
+  <p>
+    The API uses a voting scheme to help determine the boolean decision to send back when calling <code>isNowGood</code>. This voting scheme assigns a value to each of the <a href="#EnvironmentalVariables">environmental variables</a> that is collected. The values of each variable are adjusted by specifying a <a href="#confidenceLevels">confidence level</a>.
+  </p>
+</section>
+
+<section>
+  <h3 id="lifetime-FxOSUService" class="informative">Lifetime</h3>
+
+<p>
+  Once created, an <code>FxOSUService</code> is only active for as long as it takes its' only method isNowGood to respond.
+</p>
+
+</section>
+</section>
+
+<section>
+<h2>Acknowledgements</h2>
+<p>This specification is the collective work of the W3C <a href="#">FxOSU Working Group</a>.</p>
+
+<p>Members of the Working Group are (at the time of writing, and by alphabetical order): <br />
+Zeller, John (OSU Student) - Specification Editor;
+McNeil, Jonathan (OSU Student);
+Tjiam, Pok Yan (OSU Student);
+Ayala, Dietrich (Mozilla Corporation) - Project Mentor;
+</p>
+
+</section>
+
+<section>
+<h2 id="ChangeLog">FxOSU API Change Log</h2>
+<p>See <a href="https://github.com/johnlzeller/fxosu/commits/master">changelog</a>.</p>
+</section>
+</body>
+</html>
